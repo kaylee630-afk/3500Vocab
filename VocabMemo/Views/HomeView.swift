@@ -77,17 +77,27 @@ struct HomeView: View {
 
     private var stats: some View {
         HStack(spacing: 12) {
-            statPill(
-                value: "\(vocabularyStore.entries.count)",
-                label: "总词条",
-                color: Color(red: 0.16, green: 0.44, blue: 0.96)
-            )
+            NavigationLink {
+                AlphabeticalView()
+            } label: {
+                statPill(
+                    value: "\(vocabularyStore.entries.count)",
+                    label: "总词条",
+                    color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
 
-            statPill(
-                value: "\(mistakeStore.entries.count)",
-                label: "错题数",
-                color: Color(red: 0.88, green: 0.22, blue: 0.28)
-            )
+            NavigationLink {
+                ErrorBookView()
+            } label: {
+                statPill(
+                    value: "\(mistakeStore.entries.count)",
+                    label: "错题数",
+                    color: Color(red: 0.88, green: 0.22, blue: 0.28)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
     }
 
@@ -100,6 +110,12 @@ struct HomeView: View {
             Text(label)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+
+            Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(Color.black.opacity(0.18))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

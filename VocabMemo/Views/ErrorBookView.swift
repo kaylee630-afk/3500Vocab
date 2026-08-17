@@ -4,6 +4,8 @@ struct ErrorBookView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
 
+    @State private var expandedLevels = Set(MistakeLevel.allCases)
+
     private var sortedMistakes: [MistakeEntry] {
         mistakeStore.entries.sorted {
             if $0.level != $1.level {
@@ -46,7 +48,20 @@ struct ErrorBookView: View {
                 let items = sortedMistakes.filter { $0.level == level }
 
                 if !items.isEmpty {
-                    Section {
+                    DisclosureGroup(
+                        isExpanded: Binding(
+                            get: { expandedLevels.contains(level) },
+                            set: { isExpanded in
+                                withAnimation(.easeInOut(duration: 0.22)) {
+                                    if isExpanded {
+                                        expandedLevels.insert(level)
+                                    } else {
+                                        expandedLevels.remove(level)
+                                    }
+                                }
+                            }
+                        )
+                    ) {
                         ForEach(items) { mistake in
                             NavigationLink {
                                 WordDetailView(entry: entry(for: mistake))
@@ -55,7 +70,7 @@ struct ErrorBookView: View {
                             }
                             .listRowBackground(Color.white)
                         }
-                    } header: {
+                    } label: {
                         HStack {
                             Label(level.rawValue, systemImage: level.icon)
                                 .font(.headline)
@@ -68,6 +83,7 @@ struct ErrorBookView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    .listRowBackground(Color.white)
                 }
             }
         }

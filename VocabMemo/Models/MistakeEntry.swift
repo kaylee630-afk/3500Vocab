@@ -1,6 +1,6 @@
 import Foundation
 
-enum MistakeLevel: String, Codable, CaseIterable, Identifiable {
+enum MistakeLevel: String, Codable, CaseIterable, Identifiable, Hashable {
     case light = "偶尔出错"
     case moderate = "容易出错"
     case high = "高频易错"
