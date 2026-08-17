@@ -5,6 +5,7 @@ struct RandomThirtyView: View {
     @EnvironmentObject private var mistakeStore: MistakeStore
     @EnvironmentObject private var progressStore: StudyProgressStore
 
+    @State private var category: VocabularyCategory = .all
     @State private var entries: [VocabularyEntry] = []
     @State private var index = 0
     @State private var knownCount = 0
@@ -12,29 +13,38 @@ struct RandomThirtyView: View {
     @State private var isFinished = false
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
+        VStack(spacing: 12) {
+            CategoryPicker(selection: $category)
+                .padding(.horizontal, 20)
 
-            if isFinished {
-                summary
-                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
-            } else if let current {
-                studyContent(current)
-                    .id(current.id)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-            } else {
-                ProgressView()
+            ZStack {
+                Color.white.ignoresSafeArea()
+
+                if isFinished {
+                    summary
+                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                } else if let current {
+                    studyContent(current)
+                        .id(current.id)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                } else {
+                    ProgressView()
+                }
             }
         }
+        .background(Color.white.ignoresSafeArea())
         .navigationTitle("随机 30 词")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if entries.isEmpty {
                 startNewRound()
             }
+        }
+        .onChange(of: category) { _, _ in
+            startNewRound()
         }
     }
 
@@ -146,7 +156,7 @@ struct RandomThirtyView: View {
     }
 
     private func startNewRound() {
-        entries = vocabularyStore.randomEntries(count: 30)
+        entries = vocabularyStore.randomEntries(count: 30, category: category)
         index = 0
         knownCount = 0
         unknownCount = 0

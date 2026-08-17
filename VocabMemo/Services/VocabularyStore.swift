@@ -13,13 +13,27 @@ final class VocabularyStore: ObservableObject {
         entries.first { $0.id == id }
     }
 
-    func randomEntries(count: Int) -> [VocabularyEntry] {
-        Array(entries.shuffled().prefix(count))
+    func entries(for category: VocabularyCategory) -> [VocabularyEntry] {
+        switch category {
+        case .all:
+            return entries
+        case .word:
+            return entries.filter { !$0.isPhrase }
+        case .phrase:
+            return entries.filter { $0.isPhrase }
+        }
     }
 
-    func randomEntry(excluding excludedIDs: Set<Int> = []) -> VocabularyEntry? {
-        let candidates = entries.filter { !excludedIDs.contains($0.id) }
-        return candidates.randomElement() ?? entries.randomElement()
+    func randomEntries(count: Int, category: VocabularyCategory) -> [VocabularyEntry] {
+        Array(entries(for: category).shuffled().prefix(count))
+    }
+
+    func randomEntry(
+        excluding excludedIDs: Set<Int> = [],
+        category: VocabularyCategory
+    ) -> VocabularyEntry? {
+        let candidates = entries(for: category).filter { !excludedIDs.contains($0.id) }
+        return candidates.randomElement() ?? entries(for: category).randomElement()
     }
 
     func groupedEntries() -> [(letter: String, entries: [VocabularyEntry])] {

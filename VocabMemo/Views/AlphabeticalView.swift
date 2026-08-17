@@ -2,11 +2,13 @@ import SwiftUI
 
 struct AlphabeticalView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
+    @State private var category: VocabularyCategory = .all
     @State private var searchText = ""
 
     private var filteredEntries: [VocabularyEntry] {
-        guard !searchText.isEmpty else { return vocabularyStore.entries }
-        return vocabularyStore.entries.filter {
+        let categoryEntries = vocabularyStore.entries(for: category)
+        guard !searchText.isEmpty else { return categoryEntries }
+        return categoryEntries.filter {
             $0.term.localizedCaseInsensitiveContains(searchText)
         }
     }
@@ -21,8 +23,9 @@ struct AlphabeticalView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
+        VStack(spacing: 12) {
+            CategoryPicker(selection: $category)
+                .padding(.horizontal, 20)
 
             List {
                 ForEach(groups, id: \.letter) { group in
@@ -46,6 +49,7 @@ struct AlphabeticalView: View {
             .scrollContentBackground(.hidden)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索单词或短语")
         }
+        .background(Color.white.ignoresSafeArea())
         .navigationTitle("按字母背单词")
         .navigationBarTitleDisplayMode(.inline)
     }

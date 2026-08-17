@@ -28,6 +28,20 @@ extension MistakeLevel {
     }
 }
 
+struct CategoryPicker: View {
+    @Binding var selection: VocabularyCategory
+
+    var body: some View {
+        Picker("分类", selection: $selection) {
+            ForEach(VocabularyCategory.allCases) { category in
+                Text(category.rawValue)
+                    .tag(category)
+            }
+        }
+        .pickerStyle(.segmented)
+    }
+}
+
 struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

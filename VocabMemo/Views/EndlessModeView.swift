@@ -5,49 +5,62 @@ struct EndlessModeView: View {
     @EnvironmentObject private var mistakeStore: MistakeStore
     @EnvironmentObject private var progressStore: StudyProgressStore
 
+    @State private var category: VocabularyCategory = .all
     @State private var current: VocabularyEntry?
     @State private var studiedCount = 0
     @State private var excludedIDs: Set<Int> = []
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
-
-            if let current {
-                VStack(spacing: 18) {
-                    header
-
-                    FlashcardView(
-                        entry: current,
-                        onKnown: markKnown,
-                        onUnknown: markUnknown
-                    )
-                    .id(current.id)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-
-                    Button {
-                        nextWord()
-                    } label: {
-                        Label("换一个", systemImage: "arrow.triangle.2.circlepath")
-                            .font(.subheadline.weight(.semibold))
-                    }
-                    .buttonStyle(ScaleButtonStyle())
-                }
+        VStack(spacing: 12) {
+            CategoryPicker(selection: $category)
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
-            } else {
-                ProgressView()
+
+            ZStack {
+                Color.white.ignoresSafeArea()
+
+                if let current {
+                    VStack(spacing: 18) {
+                        header
+
+                        FlashcardView(
+                            entry: current,
+                            onKnown: markKnown,
+                            onUnknown: markUnknown
+                        )
+                        .id(current.id)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+
+                        Button {
+                            nextWord()
+                        } label: {
+                            Label("换一个", systemImage: "arrow.triangle.2.circlepath")
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                } else {
+                    ProgressView()
+                }
             }
         }
+        .background(Color.white.ignoresSafeArea())
         .navigationTitle("无尽模式")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if current == nil {
                 nextWord()
             }
+        }
+        .onChange(of: category) { _, _ in
+            excludedIDs.removeAll()
+            current = nil
+            studiedCount = 0
+            nextWord()
         }
     }
 
@@ -107,8 +120,8 @@ struct EndlessModeView: View {
     }
 
     private func nextWord() {
-        let next = vocabularyStore.randomEntry(excluding: excludedIDs)
-            ?? vocabularyStore.randomEntry()
+        let next = vocabularyStore.randomEntry(excluding: excludedIDs, category: category)
+            ?? vocabularyStore.randomEntry(excluding: [], category: category)
 
         withAnimation(.easeInOut(duration: 0.24)) {
             current = next
