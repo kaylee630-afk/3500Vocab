@@ -18,6 +18,7 @@ final class TranslationCache {
 
 struct TranslatedMeaningView: View {
     let text: String
+    var compact = false
 
     @State private var output: String?
     @State private var failed = false
@@ -26,28 +27,35 @@ struct TranslatedMeaningView: View {
         Group {
             if let output, !output.isEmpty {
                 Text(output)
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.primary)
+                    .font(compact ? .subheadline : .title2)
+                    .fontWeight(compact ? .regular : .medium)
+                    .multilineTextAlignment(compact ? .leading : .center)
+                    .foregroundStyle(compact ? Color.secondary : Color.primary)
+                    .lineLimit(compact ? 2 : nil)
             } else if failed {
-                VStack(spacing: 10) {
-                    Image(systemName: "exclamationmark.circle")
-                        .font(.title2)
+                if compact {
                     Text("中文释义暂不可用")
-                        .font(.subheadline)
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                } else {
+                    VStack(spacing: 10) {
+                        Image(systemName: "exclamationmark.circle")
+                            .font(.title2)
+                        Text("中文释义暂不可用")
+                            .font(.subheadline)
+                    }
+                    .foregroundStyle(.secondary)
                 }
-                .foregroundStyle(.secondary)
             } else {
-                HStack(spacing: 10) {
+                HStack(spacing: compact ? 5 : 10) {
                     ProgressView()
-                    Text("正在获取中文释义")
-                        .font(.subheadline)
+                    Text(compact ? "翻译中…" : "正在获取中文释义")
+                        .font(compact ? .caption : .subheadline)
                 }
                 .foregroundStyle(.secondary)
             }
         }
-        .frame(minHeight: 52)
+        .frame(minHeight: compact ? 0 : 52)
         .translationTask(
             source: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "zh-Hans")

@@ -173,6 +173,8 @@ struct ErrorBookView: View {
                     .foregroundStyle(Color.primary)
                     .lineLimit(2)
 
+                TranslatedMeaningView(text: mistake.term, compact: true)
+
                 Text("错误 \(mistake.wrongCount) 次 · \(mistake.level.rawValue)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
