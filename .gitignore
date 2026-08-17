@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode user data and build products
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Common temporary files
+*.tmp
+*.log

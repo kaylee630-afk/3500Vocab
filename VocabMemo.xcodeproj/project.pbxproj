@@ -1,0 +1,385 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06EC5520DD63667A426308EB /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = E984F5361E8C94357EF02A20 /* Components.swift */; };
+		14B71CEE42FDA4A34A8B7F78 /* MistakeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AB80B7BF9E0768432462D7 /* MistakeStore.swift */; };
+		1B7936D622A714D3E0BBC5A6 /* VocabularyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B976A60AF45D136655C38C5 /* VocabularyEntry.swift */; };
+		1BEB803A4737F8AA7A87E7C7 /* VocabMemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70547319D6505A6ABB1A26C8 /* VocabMemoApp.swift */; };
+		2EA016886AE8329B0FFE6BA4 /* VocabularyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB80FF176BB116B3D752B0C /* VocabularyStore.swift */; };
+		4DE9EB9B1642503F6F4F2266 /* FlashcardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B90F3D78858895880DA699 /* FlashcardView.swift */; };
+		535E7DED10748AC4454A8DB1 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DEC30426CC511B8F986D12 /* HomeView.swift */; };
+		86AA077FDCE3EC32DD44C74B /* MistakeEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61B632228CE72DA74E1844C /* MistakeEntry.swift */; };
+		9468DED023D60B6C1AE9ADE0 /* ErrorBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B99C5EB8E1F8358627E4FE /* ErrorBookView.swift */; };
+		B8B0B450A25B052BC59E7014 /* words.json in Resources */ = {isa = PBXBuildFile; fileRef = E3A444435630A760C91D990D /* words.json */; };
+		BFBB28E9CBE3DEE8E368ACE9 /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1927EBE17DE2AD50CBA24B0 /* TranslationService.swift */; };
+		D4EC8DC47017082A5C93B3D3 /* EndlessModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E509EB451F807CF6F58E1FBF /* EndlessModeView.swift */; };
+		F754E09C36FBD9B6E2B03640 /* AlphabeticalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D02239354AF4F8052BC035 /* AlphabeticalView.swift */; };
+		F85FFE5131BE6BE1C200C298 /* RandomThirtyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414598302361A5B2D6EE9D67 /* RandomThirtyView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		16490E67B2B2B869898DBC8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		16AB80B7BF9E0768432462D7 /* MistakeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistakeStore.swift; sourceTree = "<group>"; };
+		2BB80FF176BB116B3D752B0C /* VocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyStore.swift; sourceTree = "<group>"; };
+		414598302361A5B2D6EE9D67 /* RandomThirtyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomThirtyView.swift; sourceTree = "<group>"; };
+		70547319D6505A6ABB1A26C8 /* VocabMemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabMemoApp.swift; sourceTree = "<group>"; };
+		72B99C5EB8E1F8358627E4FE /* ErrorBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBookView.swift; sourceTree = "<group>"; };
+		7B976A60AF45D136655C38C5 /* VocabularyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyEntry.swift; sourceTree = "<group>"; };
+		93D02239354AF4F8052BC035 /* AlphabeticalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphabeticalView.swift; sourceTree = "<group>"; };
+		A22BD470B26A69DEED6FAAE0 /* VocabMemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VocabMemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7DEC30426CC511B8F986D12 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B1927EBE17DE2AD50CBA24B0 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		B61B632228CE72DA74E1844C /* MistakeEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MistakeEntry.swift; sourceTree = "<group>"; };
+		C1B90F3D78858895880DA699 /* FlashcardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardView.swift; sourceTree = "<group>"; };
+		E3A444435630A760C91D990D /* words.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = words.json; sourceTree = "<group>"; };
+		E509EB451F807CF6F58E1FBF /* EndlessModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndlessModeView.swift; sourceTree = "<group>"; };
+		E984F5361E8C94357EF02A20 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0F37FBCA531EF14241310809 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0335C3F1FD74EAB31345AF23 = {
+			isa = PBXGroup;
+			children = (
+				D3CEBA4A8F19DCF3F04132E6 /* VocabMemo */,
+				E6193F1CB7092F2952A3C49D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		19439A25838EB9782334E261 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E984F5361E8C94357EF02A20 /* Components.swift */,
+				A7DEC30426CC511B8F986D12 /* HomeView.swift */,
+				C1B90F3D78858895880DA699 /* FlashcardView.swift */,
+				414598302361A5B2D6EE9D67 /* RandomThirtyView.swift */,
+				E509EB451F807CF6F58E1FBF /* EndlessModeView.swift */,
+				93D02239354AF4F8052BC035 /* AlphabeticalView.swift */,
+				72B99C5EB8E1F8358627E4FE /* ErrorBookView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5718BFA849DFC04DFF1EF3A8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7B976A60AF45D136655C38C5 /* VocabularyEntry.swift */,
+				B61B632228CE72DA74E1844C /* MistakeEntry.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5AD5D63BC86890DF4530A3A1 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2BB80FF176BB116B3D752B0C /* VocabularyStore.swift */,
+				16AB80B7BF9E0768432462D7 /* MistakeStore.swift */,
+				B1927EBE17DE2AD50CBA24B0 /* TranslationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		838029050CE6FCC7D9E0AC51 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E3A444435630A760C91D990D /* words.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D3CEBA4A8F19DCF3F04132E6 /* VocabMemo */ = {
+			isa = PBXGroup;
+			children = (
+				70547319D6505A6ABB1A26C8 /* VocabMemoApp.swift */,
+				16490E67B2B2B869898DBC8A /* Info.plist */,
+				5718BFA849DFC04DFF1EF3A8 /* Models */,
+				5AD5D63BC86890DF4530A3A1 /* Services */,
+				19439A25838EB9782334E261 /* Views */,
+				838029050CE6FCC7D9E0AC51 /* Resources */,
+			);
+			path = VocabMemo;
+			sourceTree = "<group>";
+		};
+		E6193F1CB7092F2952A3C49D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A22BD470B26A69DEED6FAAE0 /* VocabMemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F6724C001841A2362DDB5E0D /* VocabMemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CF80BD076971407E22ACA19 /* Build configuration list for PBXNativeTarget "VocabMemo" */;
+			buildPhases = (
+				440A17C8863C6D9354AE62F7 /* Sources */,
+				0F37FBCA531EF14241310809 /* Frameworks */,
+				793735617F7773EE45BFDB1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VocabMemo;
+			productName = VocabMemo;
+			productReference = A22BD470B26A69DEED6FAAE0 /* VocabMemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		48BC65EDA0AD1B8F12873DEC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F6724C001841A2362DDB5E0D = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 1ED21DE5AF999EBEA95A5421 /* Build configuration list for PBXProject "VocabMemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = 0335C3F1FD74EAB31345AF23;
+			productRefGroup = E6193F1CB7092F2952A3C49D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F6724C001841A2362DDB5E0D /* VocabMemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		793735617F7773EE45BFDB1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8B0B450A25B052BC59E7014 /* words.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		440A17C8863C6D9354AE62F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BEB803A4737F8AA7A87E7C7 /* VocabMemoApp.swift in Sources */,
+				1B7936D622A714D3E0BBC5A6 /* VocabularyEntry.swift in Sources */,
+				86AA077FDCE3EC32DD44C74B /* MistakeEntry.swift in Sources */,
+				2EA016886AE8329B0FFE6BA4 /* VocabularyStore.swift in Sources */,
+				14B71CEE42FDA4A34A8B7F78 /* MistakeStore.swift in Sources */,
+				BFBB28E9CBE3DEE8E368ACE9 /* TranslationService.swift in Sources */,
+				06EC5520DD63667A426308EB /* Components.swift in Sources */,
+				535E7DED10748AC4454A8DB1 /* HomeView.swift in Sources */,
+				4DE9EB9B1642503F6F4F2266 /* FlashcardView.swift in Sources */,
+				F85FFE5131BE6BE1C200C298 /* RandomThirtyView.swift in Sources */,
+				D4EC8DC47017082A5C93B3D3 /* EndlessModeView.swift in Sources */,
+				F754E09C36FBD9B6E2B03640 /* AlphabeticalView.swift in Sources */,
+				9468DED023D60B6C1AE9ADE0 /* ErrorBookView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		09D84499448828B5307C51F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BC2B8FA085CBF1FA4B7171E8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C3F5713F6890D527DF6A5A23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3VPSQQJPD9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VocabMemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.VocabMemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FF976F770F91402FFE14CCC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3VPSQQJPD9;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VocabMemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.VocabMemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1CF80BD076971407E22ACA19 /* Build configuration list for PBXNativeTarget "VocabMemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF976F770F91402FFE14CCC1 /* Debug */,
+				C3F5713F6890D527DF6A5A23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1ED21DE5AF999EBEA95A5421 /* Build configuration list for PBXProject "VocabMemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC2B8FA085CBF1FA4B7171E8 /* Debug */,
+				09D84499448828B5307C51F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 48BC65EDA0AD1B8F12873DEC /* Project object */;
+}
