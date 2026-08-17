@@ -171,6 +171,22 @@ final class DailyStudyStore: ObservableObject {
         completedDates.count
     }
 
+    func isCompleted(on date: Date) -> Bool {
+        completedDates.contains(key(for: date))
+    }
+
+    func completedCount(inMonthContaining date: Date) -> Int {
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        return completedDates.filter { key in
+            guard let parts = dateComponents(from: key) else { return false }
+            return parts.year == components.year && parts.month == components.month
+        }.count
+    }
+
+    func recentCompletedKeys(limit: Int) -> [String] {
+        Array(completedDates.sorted(by: >).prefix(max(limit, 0)))
+    }
+
     var currentStreak: Int {
         let calendar = Calendar.current
         var cursor = calendar.startOfDay(for: Date())
@@ -202,6 +218,12 @@ final class DailyStudyStore: ObservableObject {
     private func key(for date: Date) -> String {
         let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", components.year ?? 0, components.month ?? 0, components.day ?? 0)
+    }
+
+    private func dateComponents(from key: String) -> DateComponents? {
+        let pieces = key.split(separator: "-").compactMap { Int($0) }
+        guard pieces.count == 3 else { return nil }
+        return DateComponents(year: pieces[0], month: pieces[1], day: pieces[2])
     }
 
     private func load() {
