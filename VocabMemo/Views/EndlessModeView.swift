@@ -52,16 +52,44 @@ struct EndlessModeView: View {
     }
 
     private var header: some View {
-        HStack {
-            Text("已学 \(studiedCount) 词")
-                .font(.subheadline.weight(.medium))
+        VStack(spacing: 10) {
+            HStack {
+                Text("已学 \(studiedCount) 词")
+                    .font(.subheadline.weight(.medium))
 
-            Spacer()
+                Spacer()
 
-            Text("错题 \(mistakeStore.entries.count)")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                Text("错题 \(mistakeStore.entries.count)")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack {
+                Text("3500 词总体进度")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Text("\(progressStore.knownCount) / \(vocabularyStore.entries.count)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+            }
+
+            ProgressView(
+                value: Double(progressStore.knownCount),
+                total: Double(max(vocabularyStore.entries.count, 1))
+            )
+            .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
         }
+        .padding(14)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.black.opacity(0.05), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 6)
     }
 
     private func markKnown() {
