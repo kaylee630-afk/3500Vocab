@@ -99,37 +99,50 @@ struct HomeView: View {
     }
 
     private var overallProgressCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("学习进度")
-                .font(.headline)
-                .foregroundStyle(Color.primary)
+        NavigationLink {
+            ProgressDetailView()
+        } label: {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("学习进度")
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
 
-            progressRow(
-                label: "单词",
-                icon: "textformat.abc",
-                known: wordKnownCount,
-                total: wordEntries.count,
-                color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.black.opacity(0.18))
+                }
+
+                progressRow(
+                    label: "单词",
+                    icon: "textformat.abc",
+                    known: wordKnownCount,
+                    total: wordEntries.count,
+                    color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                )
+
+                Divider()
+
+                progressRow(
+                    label: "短语",
+                    icon: "quote.bubble",
+                    known: phraseKnownCount,
+                    total: phraseEntries.count,
+                    color: Color(red: 0.28, green: 0.68, blue: 0.42)
+                )
+            }
+            .padding(18)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(Color.black.opacity(0.055), lineWidth: 1)
             )
-
-            Divider()
-
-            progressRow(
-                label: "短语",
-                icon: "quote.bubble",
-                known: phraseKnownCount,
-                total: phraseEntries.count,
-                color: Color(red: 0.28, green: 0.68, blue: 0.42)
-            )
+            .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
         }
-        .padding(18)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.black.opacity(0.055), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
+        .buttonStyle(ScaleButtonStyle())
     }
 
     private func progressRow(
@@ -590,5 +603,140 @@ struct CheckInCalendarView: View {
         formatter.locale = Locale(identifier: "zh_CN")
         formatter.dateFormat = "M月d日"
         return formatter.string(from: date)
+    }
+}
+
+struct ProgressDetailView: View {
+    @EnvironmentObject private var vocabularyStore: VocabularyStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
+
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 16) {
+                    summaryCard
+                    progressCard(
+                        category: .word,
+                        icon: "textformat.abc",
+                        color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                    )
+                    progressCard(
+                        category: .phrase,
+                        icon: "quote.bubble",
+                        color: Color(red: 0.28, green: 0.68, blue: 0.42)
+                    )
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
+                .padding(.bottom, 28)
+            }
+        }
+        .background(Color.white.ignoresSafeArea())
+        .navigationTitle("学习进度")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var summaryCard: some View {
+        let total = vocabularyStore.entries.count
+        let known = progressStore.knownCount
+        let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+
+        return VStack(spacing: 14) {
+            HStack {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("总学习进度")
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+
+                    Text("已掌握 \(known) / \(total) 个词条")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Text("\(percent)%")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+            }
+
+            ProgressView(value: Double(known), total: Double(max(total, 1)))
+                .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
+        }
+        .padding(20)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
+    }
+
+    private func progressCard(
+        category: VocabularyCategory,
+        icon: String,
+        color: Color
+    ) -> some View {
+        let entries = vocabularyStore.entries(for: category)
+        let known = entries.filter { progressStore.isKnown($0) }.count
+        let total = entries.count
+        let remaining = max(total - known, 0)
+        let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+
+        return VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 13) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .fill(color.opacity(0.12))
+                        .frame(width: 46, height: 46)
+
+                    Image(systemName: icon)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(color)
+                }
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(category.rawValue)
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+
+                    Text("\(known) / \(total) · \(percent)%")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Text("\(percent)%")
+                    .font(.title3.bold())
+                    .foregroundStyle(color)
+            }
+
+            ProgressView(value: Double(known), total: Double(max(total, 1)))
+                .tint(color)
+
+            HStack {
+                Label("已掌握 \(known)", systemImage: "checkmark.circle.fill")
+                    .font(.caption)
+                    .foregroundStyle(color)
+
+                Spacer()
+
+                Label("待学习 \(remaining)", systemImage: "circle.dotted")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
     }
 }
