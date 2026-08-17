@@ -28,6 +28,17 @@ final class VocabularyStore: ObservableObject {
         Array(entries(for: category).shuffled().prefix(count))
     }
 
+    func dailyEntries(
+        count: Int,
+        category: VocabularyCategory,
+        dayKey: String
+    ) -> [VocabularyEntry] {
+        let candidates = entries(for: category)
+        let seed = stableSeed("\(dayKey)|\(category.rawValue)")
+        var generator = StableRandomNumberGenerator(seed: seed)
+        return Array(candidates.shuffled(using: &generator).prefix(count))
+    }
+
     func randomEntry(
         excluding excludedIDs: Set<Int> = [],
         category: VocabularyCategory
@@ -58,6 +69,34 @@ final class VocabularyStore: ObservableObject {
         } catch {
             entries = []
         }
+    }
+}
+
+private func stableSeed(_ string: String) -> UInt64 {
+    var hash: UInt64 = 14695981039346656037
+
+    for byte in string.utf8 {
+        hash = (hash ^ UInt64(byte)) &* 1099511628211
+    }
+
+    return hash
+}
+
+private struct StableRandomNumberGenerator: RandomNumberGenerator {
+    private var state: UInt64
+
+    init(seed: UInt64) {
+        state = seed &+ 0x9E37_79B9_7F4A_7C15
+    }
+
+    mutating func next() -> UInt64 {
+        state &+= 0x9E37_79B9_7F4A_7C15
+
+        var value = state
+        value = (value ^ (value >> 30)) &* 0xBF58_476D_1CE4_E5B9
+        value = (value ^ (value >> 27)) &* 0x94D0_49BB_1331_11EB
+
+        return value ^ (value >> 31)
     }
 }
 
@@ -101,6 +140,81 @@ final class StudyProgressStore: ObservableObject {
             try data.write(to: fileURL, options: .atomic)
         } catch {
             // Progress persistence should not interrupt studying.
+        }
+    }
+}
+
+final class DailyStudyStore: ObservableObject {
+    static let shared = DailyStudyStore()
+
+    @Published private(set) var completedDates: Set<String> = []
+
+    private let fileURL: URL
+
+    init() {
+        let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        fileURL = directory.appendingPathComponent("vocab-daily-checkin.json")
+        load()
+    }
+
+    var todayKey: String {
+        key(for: Date())
+    }
+
+    var isCompletedToday: Bool {
+        completedDates.contains(todayKey)
+    }
+
+    var totalCheckIns: Int {
+        completedDates.count
+    }
+
+    var currentStreak: Int {
+        let calendar = Calendar.current
+        var cursor = calendar.startOfDay(for: Date())
+
+        if !completedDates.contains(key(for: cursor)) {
+            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: cursor) else {
+                return 0
+            }
+            cursor = yesterday
+        }
+
+        var streak = 0
+        while completedDates.contains(key(for: cursor)) {
+            streak += 1
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else {
+                break
+            }
+            cursor = previous
+        }
+
+        return streak
+    }
+
+    func markCompletedToday() {
+        completedDates.insert(todayKey)
+        save()
+    }
+
+    private func key(for date: Date) -> String {
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", components.year ?? 0, components.month ?? 0, components.day ?? 0)
+    }
+
+    private func load() {
+        guard let data = try? Data(contentsOf: fileURL) else { return }
+        completedDates = Set((try? JSONDecoder().decode([String].self, from: data)) ?? [])
+    }
+
+    private func save() {
+        do {
+            let data = try JSONEncoder().encode(completedDates.sorted())
+            try data.write(to: fileURL, options: .atomic)
+        } catch {
+            // Check-in persistence should not interrupt studying.
         }
     }
 }

@@ -4,6 +4,7 @@ struct HomeView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
     @EnvironmentObject private var progressStore: StudyProgressStore
+    @EnvironmentObject private var dailyStudyStore: DailyStudyStore
 
     var body: some View {
         ZStack {
@@ -12,6 +13,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     header
+                    dailyCheckInCard
                     overallProgressCard
                     stats
                     featureCards
@@ -21,6 +23,66 @@ struct HomeView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var dailyCheckInCard: some View {
+        NavigationLink {
+            DailyStudyView()
+        } label: {
+            HStack(spacing: 16) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill((dailyStudyStore.isCompletedToday
+                            ? Color(red: 0.28, green: 0.68, blue: 0.42)
+                            : Color(red: 0.16, green: 0.44, blue: 0.96)).opacity(0.12))
+                        .frame(width: 58, height: 58)
+
+                    Image(systemName: dailyStudyStore.isCompletedToday
+                        ? "checkmark.seal.fill"
+                        : "calendar.badge.checkmark")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(dailyStudyStore.isCompletedToday
+                            ? Color(red: 0.28, green: 0.68, blue: 0.42)
+                            : Color(red: 0.16, green: 0.44, blue: 0.96))
+                }
+
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(dailyStudyStore.isCompletedToday ? "今日已打卡" : "今日打卡")
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+
+                    Text("每天完成 50 个随机单词")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+
+                Spacer(minLength: 8)
+
+                VStack(alignment: .trailing, spacing: 5) {
+                    Text("连续 \(dailyStudyStore.currentStreak) 天")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.primary)
+
+                    Text(dailyStudyStore.isCompletedToday ? "已完成" : "开始")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.black.opacity(0.18))
+            }
+            .padding(18)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .stroke(Color.black.opacity(0.055), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.055), radius: 18, x: 0, y: 10)
+        }
+        .buttonStyle(ScaleButtonStyle())
     }
 
     private var header: some View {
@@ -209,8 +271,8 @@ struct HomeView: View {
                 RandomThirtyView()
             } label: {
                 FeatureCard(
-                    title: "随机 30 词",
-                    subtitle: "像百词斩一样，先看英文，再对照中文",
+                    title: "随机 50 词",
+                    subtitle: "随机抽取 50 个词，像百词斩一样先看英文再对照中文",
                     icon: "shuffle",
                     tint: Color(red: 0.16, green: 0.44, blue: 0.96)
                 )
