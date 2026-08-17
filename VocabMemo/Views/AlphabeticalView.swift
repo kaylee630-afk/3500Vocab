@@ -2,8 +2,12 @@ import SwiftUI
 
 struct AlphabeticalView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
-    @State private var category: VocabularyCategory = .all
+    @State private var category: VocabularyCategory
     @State private var searchText = ""
+
+    init(initialCategory: VocabularyCategory = .all) {
+        _category = State(initialValue: initialCategory)
+    }
 
     private var filteredEntries: [VocabularyEntry] {
         let categoryEntries = vocabularyStore.entries(for: category)

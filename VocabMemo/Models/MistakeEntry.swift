@@ -30,4 +30,15 @@ struct MistakeEntry: Codable, Identifiable, Hashable {
 
     var id: Int { wordID }
     var level: MistakeLevel { MistakeLevel.level(for: wrongCount) }
+
+    var isPhrase: Bool {
+        term.contains(" ")
+            || term.contains("/")
+            || term.contains("…")
+            || term.contains("+")
+    }
+
+    var category: VocabularyCategory {
+        isPhrase ? .phrase : .word
+    }
 }

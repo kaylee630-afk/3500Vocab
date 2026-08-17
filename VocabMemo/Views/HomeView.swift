@@ -37,33 +37,28 @@ struct HomeView: View {
     }
 
     private var overallProgressCard: some View {
-        let total = vocabularyStore.entries.count
-        let percent = total == 0 ? 0 : Int((Double(progressStore.knownCount) / Double(total)) * 100)
+        VStack(alignment: .leading, spacing: 16) {
+            Text("学习进度")
+                .font(.headline)
+                .foregroundStyle(Color.primary)
 
-        return VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("3500 词总体进度")
-                        .font(.headline)
-                        .foregroundStyle(Color.primary)
-
-                    Text("已掌握 \(progressStore.knownCount) / \(total) 个词条")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                Text("\(percent)%")
-                    .font(.title3.bold())
-                    .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
-            }
-
-            ProgressView(
-                value: Double(progressStore.knownCount),
-                total: Double(max(total, 1))
+            progressRow(
+                label: "单词",
+                icon: "textformat.abc",
+                known: wordKnownCount,
+                total: wordEntries.count,
+                color: Color(red: 0.16, green: 0.44, blue: 0.96)
             )
-            .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
+
+            Divider()
+
+            progressRow(
+                label: "短语",
+                icon: "quote.bubble",
+                known: phraseKnownCount,
+                total: phraseEntries.count,
+                color: Color(red: 0.28, green: 0.68, blue: 0.42)
+            )
         }
         .padding(18)
         .background(Color.white)
@@ -75,30 +70,109 @@ struct HomeView: View {
         .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
     }
 
+    private func progressRow(
+        label: String,
+        icon: String,
+        known: Int,
+        total: Int,
+        color: Color
+    ) -> some View {
+        let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+
+        return VStack(spacing: 9) {
+            HStack {
+                Label(label, systemImage: icon)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(color)
+
+                Spacer()
+
+                Text("\(known) / \(total) · \(percent)%")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            ProgressView(value: Double(known), total: Double(max(total, 1)))
+                .tint(color)
+        }
+    }
+
     private var stats: some View {
-        HStack(spacing: 12) {
+        LazyVGrid(
+            columns: [
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12)
+            ],
+            spacing: 12
+        ) {
             NavigationLink {
-                AlphabeticalView()
+                AlphabeticalView(initialCategory: .word)
             } label: {
                 statPill(
-                    value: "\(vocabularyStore.entries.count)",
-                    label: "总词条",
+                    value: "\(wordEntries.count)",
+                    label: "总单词",
                     color: Color(red: 0.16, green: 0.44, blue: 0.96)
                 )
             }
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView()
+                AlphabeticalView(initialCategory: .phrase)
             } label: {
                 statPill(
-                    value: "\(mistakeStore.entries.count)",
-                    label: "错题数",
+                    value: "\(phraseEntries.count)",
+                    label: "总短语",
+                    color: Color(red: 0.28, green: 0.68, blue: 0.42)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+
+            NavigationLink {
+                ErrorBookView(initialCategory: .word)
+            } label: {
+                statPill(
+                    value: "\(wordMistakeCount)",
+                    label: "单词错题",
                     color: Color(red: 0.88, green: 0.22, blue: 0.28)
                 )
             }
             .buttonStyle(ScaleButtonStyle())
+
+            NavigationLink {
+                ErrorBookView(initialCategory: .phrase)
+            } label: {
+                statPill(
+                    value: "\(phraseMistakeCount)",
+                    label: "短语错题",
+                    color: Color(red: 0.95, green: 0.48, blue: 0.22)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
+    }
+
+    private var wordEntries: [VocabularyEntry] {
+        vocabularyStore.entries(for: .word)
+    }
+
+    private var phraseEntries: [VocabularyEntry] {
+        vocabularyStore.entries(for: .phrase)
+    }
+
+    private var wordKnownCount: Int {
+        wordEntries.filter { progressStore.isKnown($0) }.count
+    }
+
+    private var phraseKnownCount: Int {
+        phraseEntries.filter { progressStore.isKnown($0) }.count
+    }
+
+    private var wordMistakeCount: Int {
+        mistakeStore.entries.filter { $0.category == .word }.count
+    }
+
+    private var phraseMistakeCount: Int {
+        mistakeStore.entries.filter { $0.category == .phrase }.count
     }
 
     private func statPill(value: String, label: String, color: Color) -> some View {

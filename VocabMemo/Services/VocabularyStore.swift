@@ -84,6 +84,10 @@ final class StudyProgressStore: ObservableObject {
         save()
     }
 
+    func isKnown(_ entry: VocabularyEntry) -> Bool {
+        knownIDs.contains(entry.id)
+    }
+
     private func load() {
         guard let data = try? Data(contentsOf: fileURL) else { return }
         let ids = (try? JSONDecoder().decode([Int].self, from: data)) ?? []

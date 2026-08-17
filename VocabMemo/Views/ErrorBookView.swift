@@ -4,10 +4,26 @@ struct ErrorBookView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
 
+    @State private var category: VocabularyCategory
     @State private var expandedLevels = Set(MistakeLevel.allCases)
 
+    init(initialCategory: VocabularyCategory = .all) {
+        _category = State(initialValue: initialCategory)
+    }
+
+    private var filteredMistakes: [MistakeEntry] {
+        switch category {
+        case .all:
+            return mistakeStore.entries
+        case .word:
+            return mistakeStore.entries.filter { $0.category == .word }
+        case .phrase:
+            return mistakeStore.entries.filter { $0.category == .phrase }
+        }
+    }
+
     private var sortedMistakes: [MistakeEntry] {
-        mistakeStore.entries.sorted {
+        filteredMistakes.sorted {
             if $0.level != $1.level {
                 return $0.level.rawValue > $1.level.rawValue
             }
@@ -16,15 +32,21 @@ struct ErrorBookView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
+        VStack(spacing: 12) {
+            CategoryPicker(selection: $category)
+                .padding(.horizontal, 20)
 
-            if mistakeStore.entries.isEmpty {
-                emptyState
-            } else {
-                mistakeList
+            ZStack {
+                Color.white.ignoresSafeArea()
+
+                if mistakeStore.entries.isEmpty {
+                    emptyState
+                } else {
+                    mistakeList
+                }
             }
         }
+        .background(Color.white.ignoresSafeArea())
         .navigationTitle("错题本")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
