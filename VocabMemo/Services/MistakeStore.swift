@@ -35,6 +35,19 @@ final class MistakeStore: ObservableObject {
         save()
     }
 
+    func markCorrect(_ mistake: MistakeEntry) {
+        guard let index = entries.firstIndex(where: { $0.wordID == mistake.wordID }) else { return }
+
+        if entries[index].wrongCount <= 1 {
+            entries.remove(at: index)
+        } else {
+            entries[index].wrongCount -= 1
+            entries[index].lastWrongAt = Date()
+        }
+
+        save()
+    }
+
     func remove(_ mistake: MistakeEntry) {
         entries.removeAll { $0.wordID == mistake.wordID }
         save()

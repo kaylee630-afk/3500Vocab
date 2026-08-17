@@ -40,6 +40,8 @@ struct ErrorBookView: View {
 
     private var mistakeList: some View {
         List {
+            reviewSection
+
             ForEach(MistakeLevel.allCases) { level in
                 let items = sortedMistakes.filter { $0.level == level }
 
@@ -71,6 +73,48 @@ struct ErrorBookView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+    }
+
+    private var reviewSection: some View {
+        Section {
+            NavigationLink {
+                MistakeReviewView()
+            } label: {
+                HStack(spacing: 12) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color(red: 0.16, green: 0.44, blue: 0.96).opacity(0.12))
+                            .frame(width: 42, height: 42)
+
+                        Image(systemName: "shuffle")
+                            .font(.headline)
+                            .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+                    }
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("随机复习错题")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.primary)
+
+                        Text("打乱顺序复习，答对会降低易错等级")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.black.opacity(0.16))
+                }
+                .padding(.vertical, 4)
+            }
+            .listRowBackground(Color.white)
+        } header: {
+            Text("复习模式")
+                .font(.headline)
+                .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+        }
     }
 
     private func mistakeRow(_ mistake: MistakeEntry) -> some View {
@@ -125,5 +169,170 @@ struct ErrorBookView: View {
     private func entry(for mistake: MistakeEntry) -> VocabularyEntry {
         vocabularyStore.entry(id: mistake.wordID)
             ?? VocabularyEntry(id: mistake.wordID, term: mistake.term)
+    }
+}
+
+struct MistakeReviewView: View {
+    @EnvironmentObject private var mistakeStore: MistakeStore
+
+    @State private var queue: [MistakeEntry] = []
+    @State private var index = 0
+    @State private var knownCount = 0
+    @State private var unknownCount = 0
+    @State private var isFinished = false
+
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            if isFinished {
+                summary
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            } else if let current {
+                studyContent(current)
+                    .id(current.id)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
+                    ))
+            } else if mistakeStore.entries.isEmpty {
+                emptyState
+            } else {
+                ProgressView()
+            }
+        }
+        .navigationTitle("错题随机复习")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            if queue.isEmpty, !mistakeStore.entries.isEmpty {
+                startReview()
+            }
+        }
+    }
+
+    private var current: MistakeEntry? {
+        guard queue.indices.contains(index) else { return nil }
+        return queue[index]
+    }
+
+    private func studyContent(_ mistake: MistakeEntry) -> some View {
+        VStack(spacing: 18) {
+            reviewHeader
+
+            FlashcardView(
+                entry: VocabularyEntry(id: mistake.wordID, term: mistake.term),
+                onKnown: markKnown,
+                onUnknown: markUnknown
+            )
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 10)
+    }
+
+    private var reviewHeader: some View {
+        VStack(spacing: 10) {
+            ProgressView(value: Double(index), total: Double(max(queue.count, 1)))
+                .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
+
+            HStack {
+                Text("第 \(index + 1) / \(queue.count) 个")
+                    .font(.subheadline.weight(.medium))
+
+                Spacer()
+
+                Text("认识 \(knownCount) · 待强化 \(unknownCount)")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var summary: some View {
+        VStack(spacing: 28) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(Color(red: 0.28, green: 0.68, blue: 0.42))
+
+            Text("错题复习完成")
+                .font(.largeTitle.bold())
+
+            Text("本轮认识 \(knownCount) 个，\(unknownCount) 个需要继续强化。")
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 30)
+
+            Button {
+                withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+                    startReview()
+                }
+            } label: {
+                Text("再来一轮")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.16, green: 0.44, blue: 0.96))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .buttonStyle(ScaleButtonStyle())
+            .padding(.horizontal, 28)
+        }
+        .padding(24)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "checkmark.circle")
+                .font(.system(size: 58))
+                .foregroundStyle(Color(red: 0.28, green: 0.68, blue: 0.42))
+
+            Text("错题本已经清空")
+                .font(.title3.bold())
+
+            Text("继续在随机 30 词或无尽模式中学习，答错后会自动进入这里。")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 30)
+        }
+    }
+
+    private func startReview() {
+        queue = mistakeStore.entries.shuffled()
+        index = 0
+        knownCount = 0
+        unknownCount = 0
+        isFinished = false
+    }
+
+    private func markKnown() {
+        if let current {
+            mistakeStore.markCorrect(current)
+        }
+        knownCount += 1
+        advance()
+    }
+
+    private func markUnknown() {
+        if let current {
+            mistakeStore.recordWrong(
+                VocabularyEntry(id: current.wordID, term: current.term)
+            )
+        }
+        unknownCount += 1
+        advance()
+    }
+
+    private func advance() {
+        withAnimation(.easeInOut(duration: 0.24)) {
+            if index + 1 < queue.count {
+                index += 1
+            } else {
+                isFinished = true
+            }
+        }
     }
 }
