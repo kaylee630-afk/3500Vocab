@@ -3,6 +3,7 @@ import SwiftUI
 struct EndlessModeView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
 
     @State private var current: VocabularyEntry?
     @State private var studiedCount = 0
@@ -64,6 +65,9 @@ struct EndlessModeView: View {
     }
 
     private func markKnown() {
+        if let current {
+            progressStore.markKnown(current)
+        }
         nextWord()
     }
 

@@ -3,6 +3,7 @@ import SwiftUI
 struct RandomThirtyView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
 
     @State private var entries: [VocabularyEntry] = []
     @State private var index = 0
@@ -45,6 +46,7 @@ struct RandomThirtyView: View {
     private func studyContent(_ entry: VocabularyEntry) -> some View {
         VStack(spacing: 18) {
             progressHeader
+            overallProgressHeader
 
             FlashcardView(
                 entry: entry,
@@ -74,6 +76,39 @@ struct RandomThirtyView: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    private var overallProgressHeader: some View {
+        let total = vocabularyStore.entries.count
+        let percent = total == 0 ? 0 : Int((Double(progressStore.knownCount) / Double(total)) * 100)
+
+        return VStack(spacing: 8) {
+            HStack {
+                Text("3500 词总体进度")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Text("\(progressStore.knownCount) / \(total) · \(percent)%")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+            }
+
+            ProgressView(
+                value: Double(progressStore.knownCount),
+                total: Double(max(total, 1))
+            )
+            .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
+        }
+        .padding(14)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.black.opacity(0.05), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 6)
     }
 
     private var summary: some View {
@@ -119,6 +154,9 @@ struct RandomThirtyView: View {
     }
 
     private func markKnown() {
+        if let current {
+            progressStore.markKnown(current)
+        }
         knownCount += 1
         advance()
     }

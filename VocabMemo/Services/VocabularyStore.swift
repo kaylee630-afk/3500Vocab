@@ -46,3 +46,43 @@ final class VocabularyStore: ObservableObject {
         }
     }
 }
+
+final class StudyProgressStore: ObservableObject {
+    static let shared = StudyProgressStore()
+
+    @Published private(set) var knownCount = 0
+
+    private var knownIDs: Set<Int> = []
+    private let fileURL: URL
+
+    init() {
+        let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        fileURL = directory.appendingPathComponent("vocab-study-progress.json")
+        load()
+    }
+
+    func markKnown(_ entry: VocabularyEntry) {
+        guard !knownIDs.contains(entry.id) else { return }
+        knownIDs.insert(entry.id)
+        knownCount = knownIDs.count
+        save()
+    }
+
+    private func load() {
+        guard let data = try? Data(contentsOf: fileURL) else { return }
+        let ids = (try? JSONDecoder().decode([Int].self, from: data)) ?? []
+        knownIDs = Set(ids)
+        knownCount = knownIDs.count
+    }
+
+    private func save() {
+        do {
+            let data = try JSONEncoder().encode(knownIDs.sorted())
+            try data.write(to: fileURL, options: .atomic)
+        } catch {
+            // Progress persistence should not interrupt studying.
+        }
+    }
+}

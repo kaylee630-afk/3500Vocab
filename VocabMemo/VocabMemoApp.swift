@@ -7,6 +7,7 @@ struct VocabMemoApp: App {
             RootView()
                 .environmentObject(VocabularyStore.shared)
                 .environmentObject(MistakeStore.shared)
+                .environmentObject(StudyProgressStore.shared)
                 .preferredColorScheme(.light)
         }
     }
