@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
 
     var body: some View {
         ZStack {
@@ -11,6 +12,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     header
+                    overallProgressCard
                     stats
                     featureCards
                 }
@@ -32,6 +34,45 @@ struct HomeView: View {
                 .foregroundStyle(.secondary)
         }
         .padding(.top, 18)
+    }
+
+    private var overallProgressCard: some View {
+        let total = vocabularyStore.entries.count
+        let percent = total == 0 ? 0 : Int((Double(progressStore.knownCount) / Double(total)) * 100)
+
+        return VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("3500 词总体进度")
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+
+                    Text("已掌握 \(progressStore.knownCount) / \(total) 个词条")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Text("\(percent)%")
+                    .font(.title3.bold())
+                    .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+            }
+
+            ProgressView(
+                value: Double(progressStore.knownCount),
+                total: Double(max(total, 1))
+            )
+            .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
+        }
+        .padding(18)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
     }
 
     private var stats: some View {
