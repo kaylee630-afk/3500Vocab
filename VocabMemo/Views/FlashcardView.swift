@@ -28,17 +28,18 @@ struct FlashcardView: View {
             front
                 .opacity(revealed ? 0 : 1)
                 .rotation3DEffect(
-                    .degrees(revealed ? 90 : 0),
-                    axis: (x: 0, y: 1, z: 0)
+                    .degrees(revealed ? 180 : 0),
+                    axis: (x: 0, y: 1, z: 0),
+                    perspective: 0.65
                 )
 
-            if revealed {
-                back
-                    .rotation3DEffect(
-                        .degrees(0),
-                        axis: (x: 0, y: 1, z: 0)
-                    )
-            }
+            back
+                .opacity(revealed ? 1 : 0)
+                .rotation3DEffect(
+                    .degrees(revealed ? 0 : -180),
+                    axis: (x: 0, y: 1, z: 0),
+                    perspective: 0.65
+                )
         }
         .frame(maxWidth: .infinity, minHeight: 440)
         .background(Color.white)
@@ -50,7 +51,7 @@ struct FlashcardView: View {
         .shadow(color: Color.black.opacity(0.06), radius: 22, x: 0, y: 13)
         .contentShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .onTapGesture {
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) {
+            withAnimation(.spring(response: 0.58, dampingFraction: 0.78)) {
                 revealed.toggle()
             }
         }
