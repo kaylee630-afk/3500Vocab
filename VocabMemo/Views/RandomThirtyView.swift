@@ -89,24 +89,26 @@ struct RandomThirtyView: View {
     }
 
     private var overallProgressHeader: some View {
-        let total = vocabularyStore.entries.count
-        let percent = total == 0 ? 0 : Int((Double(progressStore.knownCount) / Double(total)) * 100)
+        let total = vocabularyStore.entries(for: category).count
+        let known = vocabularyStore.entries(for: category).filter { progressStore.isKnown($0) }.count
+        let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+        let title = category == .all ? "全部词条总体进度" : "\(category.rawValue)总体进度"
 
         return VStack(spacing: 8) {
             HStack {
-                Text("3500 词总体进度")
+                Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
 
                 Spacer()
 
-                Text("\(progressStore.knownCount) / \(total) · \(percent)%")
+                Text("\(known) / \(total) · \(percent)%")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
             }
 
             ProgressView(
-                value: Double(progressStore.knownCount),
+                value: Double(known),
                 total: Double(max(total, 1))
             )
             .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
@@ -283,10 +285,11 @@ struct DailyStudyView: View {
         let total = vocabularyStore.entries(for: category).count
         let known = vocabularyStore.entries(for: category).filter { progressStore.isKnown($0) }.count
         let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+        let title = category == .all ? "全部词条总体进度" : "\(category.rawValue)总体进度"
 
         return VStack(spacing: 8) {
             HStack {
-                Text("\(category.rawValue)总体进度")
+                Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
 

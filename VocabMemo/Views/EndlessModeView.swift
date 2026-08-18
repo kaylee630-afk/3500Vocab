@@ -34,7 +34,7 @@ struct EndlessModeView: View {
                         ))
 
                         Button {
-                            nextWord()
+                            nextWord(countAsStudied: false)
                         } label: {
                             Label("换一个", systemImage: "arrow.triangle.2.circlepath")
                                 .font(.subheadline.weight(.semibold))
@@ -53,45 +53,49 @@ struct EndlessModeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             if current == nil {
-                nextWord()
+                nextWord(countAsStudied: false)
             }
         }
         .onChange(of: category) { _, _ in
             excludedIDs.removeAll()
             current = nil
             studiedCount = 0
-            nextWord()
+            nextWord(countAsStudied: false)
         }
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
+        let total = vocabularyStore.entries(for: category).count
+        let known = vocabularyStore.entries(for: category).filter { progressStore.isKnown($0) }.count
+        let title = category == .all ? "全部词条总体进度" : "\(category.rawValue)总体进度"
+
+        return VStack(spacing: 10) {
             HStack {
                 Text("已学 \(studiedCount) 词")
                     .font(.subheadline.weight(.medium))
 
                 Spacer()
 
-                Text("错题 \(mistakeStore.entries.count)")
+                Text("错题 \(mistakeCount)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
 
             HStack {
-                Text("3500 词总体进度")
+                Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
 
                 Spacer()
 
-                Text("\(progressStore.knownCount) / \(vocabularyStore.entries.count)")
+                Text("\(known) / \(total)")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
             }
 
             ProgressView(
-                value: Double(progressStore.knownCount),
-                total: Double(max(vocabularyStore.entries.count, 1))
+                value: Double(known),
+                total: Double(max(total, 1))
             )
             .tint(Color(red: 0.16, green: 0.44, blue: 0.96))
         }
@@ -105,27 +109,34 @@ struct EndlessModeView: View {
         .shadow(color: Color.black.opacity(0.03), radius: 10, x: 0, y: 6)
     }
 
+    private var mistakeCount: Int {
+        guard category != .all else { return mistakeStore.entries.count }
+        return mistakeStore.entries.filter { $0.category == category }.count
+    }
+
     private func markKnown() {
         if let current {
             progressStore.markKnown(current)
         }
-        nextWord()
+        nextWord(countAsStudied: true)
     }
 
     private func markUnknown() {
         if let current {
             mistakeStore.recordWrong(current)
         }
-        nextWord()
+        nextWord(countAsStudied: true)
     }
 
-    private func nextWord() {
+    private func nextWord(countAsStudied: Bool) {
         let next = vocabularyStore.randomEntry(excluding: excludedIDs, category: category)
             ?? vocabularyStore.randomEntry(excluding: [], category: category)
 
         withAnimation(.easeInOut(duration: 0.24)) {
             current = next
-            studiedCount += 1
+            if countAsStudied {
+                studiedCount += 1
+            }
         }
 
         if let next {

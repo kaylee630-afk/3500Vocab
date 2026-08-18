@@ -213,7 +213,9 @@ struct ErrorBookView: View {
 }
 
 struct MistakeReviewView: View {
+    @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
 
     @State private var queue: [MistakeEntry] = []
     @State private var index = 0
@@ -332,7 +334,7 @@ struct MistakeReviewView: View {
             Text("错题本已经清空")
                 .font(.title3.bold())
 
-            Text("继续在随机 30 词或无尽模式中学习，答错后会自动进入这里。")
+            Text("继续在随机 50 词或无尽模式中学习，答错后会自动进入这里。")
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -351,6 +353,9 @@ struct MistakeReviewView: View {
     private func markKnown() {
         if let current {
             mistakeStore.markCorrect(current)
+            if let entry = vocabularyStore.entry(id: current.wordID) {
+                progressStore.markKnown(entry)
+            }
         }
         knownCount += 1
         advance()

@@ -640,7 +640,7 @@ struct ProgressDetailView: View {
 
     private var summaryCard: some View {
         let total = vocabularyStore.entries.count
-        let known = progressStore.knownCount
+        let known = vocabularyStore.entries.filter { progressStore.isKnown($0) }.count
         let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
 
         return VStack(spacing: 14) {

@@ -66,6 +66,10 @@ final class VocabularyStore: ObservableObject {
             entries = decoded.sorted {
                 $0.term.localizedCaseInsensitiveCompare($1.term) == .orderedAscending
             }
+
+            let validIDs = Set(entries.map(\.id))
+            StudyProgressStore.shared.reconcile(with: validIDs)
+            MistakeStore.shared.reconcile(with: validIDs)
         } catch {
             entries = []
         }
@@ -125,6 +129,17 @@ final class StudyProgressStore: ObservableObject {
 
     func isKnown(_ entry: VocabularyEntry) -> Bool {
         knownIDs.contains(entry.id)
+    }
+
+    func reconcile(with validIDs: Set<Int>) {
+        let reconciledIDs = knownIDs.intersection(validIDs)
+        let didChange = reconciledIDs != knownIDs
+        knownIDs = reconciledIDs
+        knownCount = reconciledIDs.count
+
+        if didChange {
+            save()
+        }
     }
 
     private func load() {

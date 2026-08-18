@@ -19,6 +19,14 @@ final class MistakeStore: ObservableObject {
         entries.first { $0.wordID == wordID }
     }
 
+    func reconcile(with validIDs: Set<Int>) {
+        let reconciled = entries.filter { validIDs.contains($0.wordID) }
+        guard reconciled.count != entries.count else { return }
+
+        entries = reconciled
+        save()
+    }
+
     func recordWrong(_ entry: VocabularyEntry) {
         if let index = entries.firstIndex(where: { $0.wordID == entry.id }) {
             entries[index].wrongCount += 1
