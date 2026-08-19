@@ -4,8 +4,10 @@ struct RandomThirtyView: View {
     @EnvironmentObject private var vocabularyStore: VocabularyStore
     @EnvironmentObject private var mistakeStore: MistakeStore
     @EnvironmentObject private var progressStore: StudyProgressStore
+    @EnvironmentObject private var dailyStudyStore: DailyStudyStore
 
     @State private var category: VocabularyCategory = .all
+    @State private var hasStarted = false
     @State private var entries: [VocabularyEntry] = []
     @State private var index = 0
     @State private var knownCount = 0
@@ -14,43 +16,126 @@ struct RandomThirtyView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            CategoryPicker(selection: $category)
-                .padding(.horizontal, 20)
+            if hasStarted {
+                CategoryPicker(selection: $category)
+                    .padding(.horizontal, 20)
 
-            ZStack {
-                Color.white.ignoresSafeArea()
-
-                if isFinished {
-                    summary
-                        .transition(.opacity.combined(with: .scale(scale: 0.96)))
-                } else if let current {
-                    studyContent(current)
-                        .id(current.id)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal: .move(edge: .leading).combined(with: .opacity)
-                        ))
-                } else {
-                    ProgressView()
-                }
+                studyArea
+            } else {
+                categorySelection
             }
         }
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("随机 50 词")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            if entries.isEmpty {
+            if hasStarted && entries.isEmpty {
                 startNewRound()
             }
         }
         .onChange(of: category) { _, _ in
-            startNewRound()
+            if hasStarted {
+                startNewRound()
+            }
+        }
+    }
+
+    private var studyArea: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            if isFinished {
+                summary
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            } else if let current {
+                studyContent(current)
+                    .id(current.id)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
+                    ))
+            } else {
+                ProgressView()
+            }
         }
     }
 
     private var current: VocabularyEntry? {
         guard entries.indices.contains(index) else { return nil }
         return entries[index]
+    }
+
+    private var categorySelection: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 8) {
+                Text("随机 50 词")
+                    .font(.largeTitle.bold())
+
+                Text("先选择本次学习范围，避免选错")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            VStack(spacing: 12) {
+                ForEach(VocabularyCategory.allCases) { option in
+                    Button {
+                        category = option
+                    } label: {
+                        HStack(spacing: 14) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(option.color.opacity(0.12))
+                                    .frame(width: 46, height: 46)
+
+                                Image(systemName: option.icon)
+                                    .font(.title3.weight(.semibold))
+                                    .foregroundStyle(option.color)
+                            }
+
+                            Text(option.rawValue)
+                                .font(.headline)
+                                .foregroundStyle(Color.primary)
+
+                            Spacer()
+
+                            if category == option {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(option.color)
+                            } else {
+                                Image(systemName: "circle")
+                                    .font(.title3)
+                                    .foregroundStyle(Color.black.opacity(0.16))
+                            }
+                        }
+                        .padding(16)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .stroke(category == option ? option.color : Color.black.opacity(0.05), lineWidth: 1.5)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
+            }
+
+            Button {
+                hasStarted = true
+                startNewRound()
+            } label: {
+                Text("开始 50 词")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.16, green: 0.44, blue: 0.96))
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+        .padding(.horizontal, 22)
+        .padding(.top, 12)
     }
 
     private func studyContent(_ entry: VocabularyEntry) -> some View {
@@ -187,6 +272,7 @@ struct RandomThirtyView: View {
                 index += 1
             } else {
                 isFinished = true
+                dailyStudyStore.markCompletedToday()
             }
         }
     }

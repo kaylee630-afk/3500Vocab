@@ -1,5 +1,29 @@
 import SwiftUI
 
+extension VocabularyCategory {
+    var color: Color {
+        switch self {
+        case .all:
+            return Color(red: 0.16, green: 0.44, blue: 0.96)
+        case .word:
+            return Color(red: 0.16, green: 0.44, blue: 0.96)
+        case .phrase:
+            return Color(red: 0.28, green: 0.68, blue: 0.42)
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .all:
+            return "square.stack.3d.up"
+        case .word:
+            return "textformat.abc"
+        case .phrase:
+            return "quote.bubble"
+        }
+    }
+}
+
 extension MistakeLevel {
     var color: Color {
         switch self {
