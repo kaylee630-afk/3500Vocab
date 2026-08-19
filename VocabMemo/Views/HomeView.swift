@@ -77,26 +77,21 @@ struct HomeView: View {
             }
             .buttonStyle(ScaleButtonStyle())
 
-            Button {
-                withAnimation(.spring(response: 0.34, dampingFraction: 0.72)) {
-                    dailyStudyStore.markCompletedToday()
-                }
+            NavigationLink {
+                RandomThirtyView()
             } label: {
                 Label(
-                    dailyStudyStore.isCompletedToday ? "今日已打卡" : "快捷打卡",
-                    systemImage: dailyStudyStore.isCompletedToday ? "checkmark.seal.fill" : "bolt.fill"
+                    "快捷打卡",
+                    systemImage: "bolt.fill"
                 )
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.white)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
-                .background(dailyStudyStore.isCompletedToday
-                    ? Color(red: 0.55, green: 0.58, blue: 0.64)
-                    : Color(red: 0.16, green: 0.44, blue: 0.96))
+                .background(Color(red: 0.16, green: 0.44, blue: 0.96))
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .buttonStyle(ScaleButtonStyle())
-            .disabled(dailyStudyStore.isCompletedToday)
         }
         .padding(18)
         .background(Color.white)
