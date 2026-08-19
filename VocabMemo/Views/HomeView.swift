@@ -26,63 +26,86 @@ struct HomeView: View {
     }
 
     private var dailyCheckInCard: some View {
-        NavigationLink {
-            CheckInCalendarView()
-        } label: {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill((dailyStudyStore.isCompletedToday
-                            ? Color(red: 0.28, green: 0.68, blue: 0.42)
-                            : Color(red: 0.16, green: 0.44, blue: 0.96)).opacity(0.12))
-                        .frame(width: 58, height: 58)
+        VStack(alignment: .leading, spacing: 14) {
+            NavigationLink {
+                CheckInCalendarView()
+            } label: {
+                HStack(spacing: 16) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill((dailyStudyStore.isCompletedToday
+                                ? Color(red: 0.28, green: 0.68, blue: 0.42)
+                                : Color(red: 0.16, green: 0.44, blue: 0.96)).opacity(0.12))
+                            .frame(width: 58, height: 58)
 
-                    Image(systemName: dailyStudyStore.isCompletedToday
-                        ? "checkmark.seal.fill"
-                        : "calendar.badge.checkmark")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(dailyStudyStore.isCompletedToday
-                            ? Color(red: 0.28, green: 0.68, blue: 0.42)
-                            : Color(red: 0.16, green: 0.44, blue: 0.96))
+                        Image(systemName: dailyStudyStore.isCompletedToday
+                            ? "checkmark.seal.fill"
+                            : "calendar.badge.checkmark")
+                            .font(.system(size: 24, weight: .semibold))
+                            .foregroundStyle(dailyStudyStore.isCompletedToday
+                                ? Color(red: 0.28, green: 0.68, blue: 0.42)
+                                : Color(red: 0.16, green: 0.44, blue: 0.96))
+                    }
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(dailyStudyStore.isCompletedToday ? "今日已打卡" : "今日打卡")
+                            .font(.headline)
+                            .foregroundStyle(Color.primary)
+
+                        Text("每天完成 50 个随机单词")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    VStack(alignment: .trailing, spacing: 5) {
+                        Text("连续 \(dailyStudyStore.currentStreak) 天")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.primary)
+
+                        Text(dailyStudyStore.isCompletedToday ? "已完成" : "查看")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.black.opacity(0.18))
                 }
-
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(dailyStudyStore.isCompletedToday ? "今日已打卡" : "今日打卡")
-                        .font(.headline)
-                        .foregroundStyle(Color.primary)
-
-                    Text("每天完成 50 个随机单词")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                }
-
-                Spacer(minLength: 8)
-
-                VStack(alignment: .trailing, spacing: 5) {
-                    Text("连续 \(dailyStudyStore.currentStreak) 天")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.primary)
-
-                    Text(dailyStudyStore.isCompletedToday ? "已完成" : "开始")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-
-                Image(systemName: "chevron.right")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.black.opacity(0.18))
             }
-            .padding(18)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(Color.black.opacity(0.055), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.055), radius: 18, x: 0, y: 10)
+            .buttonStyle(ScaleButtonStyle())
+
+            Button {
+                withAnimation(.spring(response: 0.34, dampingFraction: 0.72)) {
+                    dailyStudyStore.markCompletedToday()
+                }
+            } label: {
+                Label(
+                    dailyStudyStore.isCompletedToday ? "今日已打卡" : "快捷打卡",
+                    systemImage: dailyStudyStore.isCompletedToday ? "checkmark.seal.fill" : "bolt.fill"
+                )
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(dailyStudyStore.isCompletedToday
+                    ? Color(red: 0.55, green: 0.58, blue: 0.64)
+                    : Color(red: 0.16, green: 0.44, blue: 0.96))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .buttonStyle(ScaleButtonStyle())
+            .disabled(dailyStudyStore.isCompletedToday)
         }
-        .buttonStyle(ScaleButtonStyle())
+        .padding(18)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.055), radius: 18, x: 0, y: 10)
     }
 
     private var header: some View {
