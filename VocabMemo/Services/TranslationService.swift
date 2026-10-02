@@ -66,6 +66,8 @@ struct TranslatedMeaningView: View {
 
     @MainActor
     private func translate(session: TranslationSession) async {
+        guard !Task.isCancelled else { return }
+
         if let cached = TranslationCache.shared.translation(for: text) {
             output = cached
             failed = false

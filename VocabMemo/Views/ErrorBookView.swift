@@ -582,7 +582,7 @@ struct MistakePDFExportView: View {
             source: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "zh-Hans")
         ) { session in
-            guard pdfURL == nil, errorMessage == nil else { return }
+            guard !Task.isCancelled, pdfURL == nil, errorMessage == nil else { return }
 
             do {
                 let requests = entries.enumerated().map { index, entry in
