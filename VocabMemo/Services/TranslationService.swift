@@ -60,9 +60,7 @@ struct TranslatedMeaningView: View {
             source: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "zh-Hans")
         ) { session in
-            await Task { @MainActor in
-                await translate(session: session)
-            }.value
+            await translate(session: session)
         }
     }
 

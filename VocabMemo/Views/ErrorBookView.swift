@@ -582,40 +582,43 @@ struct MistakePDFExportView: View {
             source: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "zh-Hans")
         ) { session in
-            await preparePDF(session: session)
-        }
-    }
+            guard pdfURL == nil, errorMessage == nil else { return }
 
-    @MainActor
-    private func preparePDF(session: TranslationSession) async {
-        guard pdfURL == nil, errorMessage == nil else { return }
+            do {
+                let requests = entries.enumerated().map { index, entry in
+                    TranslationSession.Request(
+                        sourceText: entry.term,
+                        clientIdentifier: String(index)
+                    )
+                }
+                let responses = try await session.translations(from: requests)
+                var meanings: [String: String] = [:]
 
-        do {
-            let requests = entries.enumerated().map { index, entry in
-                TranslationSession.Request(
-                    sourceText: entry.term,
-                    clientIdentifier: String(index)
+                for response in responses {
+                    if let identifier = response.clientIdentifier {
+                        meanings[identifier] = response.targetText
+                    }
+                }
+
+                let pairs = entries.enumerated().map { index, entry in
+                    (term: entry.term, meaning: meanings[String(index)] ?? entry.term)
+                }
+
+                let url = try MistakePDFRenderer.makePDF(
+                    title: rangeTitle,
+                    pairs: pairs
                 )
-            }
-            let responses = try await session.translations(from: requests)
-            var meanings: [String: String] = [:]
 
-            for response in responses {
-                if let identifier = response.clientIdentifier {
-                    meanings[identifier] = response.targetText
+                await MainActor.run {
+                    pdfURL = url
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
                 }
             }
-
-            let pairs = entries.enumerated().map { index, entry in
-                (term: entry.term, meaning: meanings[String(index)] ?? entry.term)
-            }
-
-            pdfURL = try MistakePDFRenderer.makePDF(
-                title: rangeTitle,
-                pairs: pairs
-            )
-        } catch {
-            errorMessage = error.localizedDescription
         }
     }
 }
