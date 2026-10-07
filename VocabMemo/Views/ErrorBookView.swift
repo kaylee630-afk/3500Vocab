@@ -396,7 +396,11 @@ struct MistakeReviewView: View {
             FlashcardView(
                 entry: VocabularyEntry(id: mistake.wordID, term: mistake.term),
                 onKnown: markKnown,
-                onUnknown: markUnknown
+                onUnknown: markUnknown,
+                onPrevious: goPrevious,
+                onNext: goNext,
+                canGoPrevious: index > 0,
+                canGoNext: index + 1 < queue.count
             )
 
             Spacer(minLength: 0)
@@ -510,6 +514,20 @@ struct MistakeReviewView: View {
             } else {
                 isFinished = true
             }
+        }
+    }
+
+    private func goPrevious() {
+        guard index > 0 else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index -= 1
+        }
+    }
+
+    private func goNext() {
+        guard index + 1 < queue.count else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index += 1
         }
     }
 }

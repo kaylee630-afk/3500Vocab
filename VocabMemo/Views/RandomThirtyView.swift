@@ -146,7 +146,11 @@ struct RandomThirtyView: View {
             FlashcardView(
                 entry: entry,
                 onKnown: markKnown,
-                onUnknown: markUnknown
+                onUnknown: markUnknown,
+                onPrevious: goPrevious,
+                onNext: goNext,
+                canGoPrevious: index > 0,
+                canGoNext: index + 1 < entries.count
             )
 
             Spacer(minLength: 0)
@@ -276,6 +280,20 @@ struct RandomThirtyView: View {
             }
         }
     }
+
+    private func goPrevious() {
+        guard index > 0 else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index -= 1
+        }
+    }
+
+    private func goNext() {
+        guard index + 1 < entries.count else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index += 1
+        }
+    }
 }
 
 struct DailyStudyView: View {
@@ -340,7 +358,11 @@ struct DailyStudyView: View {
             FlashcardView(
                 entry: entry,
                 onKnown: markKnown,
-                onUnknown: markUnknown
+                onUnknown: markUnknown,
+                onPrevious: goPrevious,
+                onNext: goNext,
+                canGoPrevious: index > 0,
+                canGoNext: index + 1 < entries.count
             )
 
             Spacer(minLength: 0)
@@ -474,6 +496,20 @@ struct DailyStudyView: View {
                 isFinished = true
                 dailyStudyStore.markCompletedToday()
             }
+        }
+    }
+
+    private func goPrevious() {
+        guard index > 0 else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index -= 1
+        }
+    }
+
+    private func goNext() {
+        guard index + 1 < entries.count else { return }
+        withAnimation(.easeInOut(duration: 0.24)) {
+            index += 1
         }
     }
 }
