@@ -12,17 +12,369 @@ struct HomeView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    header
-                    dailyCheckInCard
-                    overallProgressCard
-                    stats
-                    featureCards
+                    greetingHeader
+                    dailyHero
+                    progressCard
+                    quickStats
+                    featureSection
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 28)
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var greetingHeader: some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("早上好，Kaylee")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+
+                Text("今天也稳稳拿下 50 个词吧")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 8)
+
+            Text("K")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 46, height: 46)
+                .background(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.16, green: 0.44, blue: 0.96),
+                            Color(red: 0.54, green: 0.45, blue: 0.94)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: Color(red: 0.16, green: 0.44, blue: 0.96).opacity(0.22), radius: 12, x: 0, y: 8)
+        }
+        .padding(.top, 14)
+    }
+
+    private var dailyHero: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack {
+                Label("连续 \(dailyStudyStore.currentStreak) 天", systemImage: "checkmark.seal.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(Color.white.opacity(0.16))
+                    .clipShape(Capsule())
+
+                Spacer()
+
+                NavigationLink {
+                    CheckInCalendarView()
+                } label: {
+                    Text("查看日历")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Color.white.opacity(0.86))
+                }
+            }
+
+            Text(dailyStudyStore.isCompletedToday ? "今日已打卡" : "今日打卡")
+                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            Text("完成今天的 50 个随机单词")
+                .font(.subheadline)
+                .foregroundStyle(Color.white.opacity(0.78))
+
+            NavigationLink {
+                RandomThirtyView()
+            } label: {
+                Label("开始今日 50 词", systemImage: "bolt.fill")
+                    .font(.headline)
+                    .foregroundStyle(Color(red: 0.12, green: 0.37, blue: 0.82))
+                    .padding(.vertical, 15)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+        .padding(22)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(red: 0.16, green: 0.44, blue: 0.96),
+                    Color(red: 0.45, green: 0.56, blue: 0.96),
+                    Color(red: 0.56, green: 0.46, blue: 0.95)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .shadow(color: Color(red: 0.16, green: 0.44, blue: 0.96).opacity(0.25), radius: 20, x: 0, y: 12)
+    }
+
+    private var progressCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("学习进度")
+                    .font(.headline)
+                    .foregroundStyle(Color.primary)
+
+                Spacer()
+
+                NavigationLink {
+                    ProgressDetailView()
+                } label: {
+                    HStack(spacing: 3) {
+                        Text("查看详情")
+                        Image(systemName: "chevron.right")
+                    }
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                }
+            }
+
+            progressRow(
+                label: "单词",
+                icon: "textformat.abc",
+                known: wordKnownCount,
+                total: wordEntries.count,
+                color: Color(red: 0.16, green: 0.44, blue: 0.96)
+            )
+
+            Divider()
+
+            progressRow(
+                label: "短语",
+                icon: "quote.bubble",
+                known: phraseKnownCount,
+                total: phraseEntries.count,
+                color: Color(red: 0.28, green: 0.68, blue: 0.42)
+            )
+        }
+        .padding(18)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
+    }
+
+    private func progressRow(
+        label: String,
+        icon: String,
+        known: Int,
+        total: Int,
+        color: Color
+    ) -> some View {
+        let percent = total == 0 ? 0 : Int((Double(known) / Double(total)) * 100)
+
+        return VStack(spacing: 9) {
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(color.opacity(0.14))
+                        .frame(width: 26, height: 26)
+
+                    Image(systemName: icon)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(color)
+                }
+
+                Text(label)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.primary)
+
+                Spacer()
+
+                Text("\(known) / \(total) · \(percent)%")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            ProgressView(value: Double(known), total: Double(max(total, 1)))
+                .tint(color)
+        }
+    }
+
+    private var quickStats: some View {
+        LazyVGrid(
+            columns: [
+                GridItem(.flexible(), spacing: 12),
+                GridItem(.flexible(), spacing: 12)
+            ],
+            spacing: 12
+        ) {
+            NavigationLink {
+                AlphabeticalView(initialCategory: .word)
+            } label: {
+                statTile(
+                    value: "\(wordEntries.count)",
+                    label: "总单词",
+                    color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+
+            NavigationLink {
+                AlphabeticalView(initialCategory: .phrase)
+            } label: {
+                statTile(
+                    value: "\(phraseEntries.count)",
+                    label: "总短语",
+                    color: Color(red: 0.28, green: 0.68, blue: 0.42)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+
+            NavigationLink {
+                ErrorBookView(initialCategory: .word)
+            } label: {
+                statTile(
+                    value: "\(wordMistakeCount)",
+                    label: "单词错题",
+                    color: Color(red: 0.88, green: 0.22, blue: 0.28)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+
+            NavigationLink {
+                ErrorBookView(initialCategory: .phrase)
+            } label: {
+                statTile(
+                    value: "\(phraseMistakeCount)",
+                    label: "短语错题",
+                    color: Color(red: 0.95, green: 0.48, blue: 0.22)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+    }
+
+    private func statTile(value: String, label: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(value)
+                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .foregroundStyle(color)
+
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.black.opacity(0.05), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.035), radius: 12, x: 0, y: 8)
+    }
+
+    private var featureSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("开始学习")
+                .font(.title3.bold())
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 12),
+                    GridItem(.flexible(), spacing: 12)
+                ],
+                spacing: 12
+            ) {
+                NavigationLink {
+                    RandomThirtyView()
+                } label: {
+                    featureTile(
+                        title: "随机 50 词",
+                        subtitle: "先看英文，再对照中文",
+                        icon: "shuffle",
+                        tint: Color(red: 0.16, green: 0.44, blue: 0.96)
+                    )
+                }
+                .buttonStyle(ScaleButtonStyle())
+
+                NavigationLink {
+                    AlphabeticalView()
+                } label: {
+                    featureTile(
+                        title: "按字母背单词",
+                        subtitle: "从 A 到 Z 系统浏览",
+                        icon: "textformat.abc",
+                        tint: Color(red: 0.28, green: 0.68, blue: 0.42)
+                    )
+                }
+                .buttonStyle(ScaleButtonStyle())
+
+                NavigationLink {
+                    EndlessModeView()
+                } label: {
+                    featureTile(
+                        title: "无尽模式",
+                        subtitle: "随机单词连续出现",
+                        icon: "infinity",
+                        tint: Color(red: 0.62, green: 0.36, blue: 0.90)
+                    )
+                }
+                .buttonStyle(ScaleButtonStyle())
+
+                NavigationLink {
+                    ErrorBookView()
+                } label: {
+                    featureTile(
+                        title: "错题本",
+                        subtitle: "按错误次数自动分级",
+                        icon: "xmark.circle.fill",
+                        tint: Color(red: 0.88, green: 0.22, blue: 0.28)
+                    )
+                }
+                .buttonStyle(ScaleButtonStyle())
+            }
+        }
+    }
+
+    private func featureTile(
+        title: String,
+        subtitle: String,
+        icon: String,
+        tint: Color
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 42, height: 42)
+                .background(tint.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(Color.primary)
+
+            Text(subtitle)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 152, alignment: .topLeading)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.black.opacity(0.055), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 14, x: 0, y: 8)
     }
 
     private var dailyCheckInCard: some View {
@@ -133,7 +485,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.black.opacity(0.18))
                 }
 
-                progressRow(
+                legacyProgressRow(
                     label: "单词",
                     icon: "textformat.abc",
                     known: wordKnownCount,
@@ -143,7 +495,7 @@ struct HomeView: View {
 
                 Divider()
 
-                progressRow(
+                legacyProgressRow(
                     label: "短语",
                     icon: "quote.bubble",
                     known: phraseKnownCount,
@@ -163,7 +515,7 @@ struct HomeView: View {
         .buttonStyle(ScaleButtonStyle())
     }
 
-    private func progressRow(
+    private func legacyProgressRow(
         label: String,
         icon: String,
         known: Int,
@@ -756,5 +1108,191 @@ struct ProgressDetailView: View {
                 .stroke(Color.black.opacity(0.055), lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(0.045), radius: 16, x: 0, y: 9)
+    }
+}
+
+struct LearningHubView: View {
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("开始学习")
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+
+                        Text("选一个适合你的模式，慢慢积累")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 14)
+
+                    NavigationLink {
+                        RandomThirtyView()
+                    } label: {
+                        FeatureCard(
+                            title: "随机 50 词",
+                            subtitle: "随机抽取 50 个词，像百词斩一样先看英文再对照中文",
+                            icon: "shuffle",
+                            tint: Color(red: 0.16, green: 0.44, blue: 0.96)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+
+                    NavigationLink {
+                        AlphabeticalView()
+                    } label: {
+                        FeatureCard(
+                            title: "按字母背单词",
+                            subtitle: "从 A 到 Z 系统浏览全部词条",
+                            icon: "textformat.abc",
+                            tint: Color(red: 0.28, green: 0.68, blue: 0.42)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+
+                    NavigationLink {
+                        EndlessModeView()
+                    } label: {
+                        FeatureCard(
+                            title: "无尽模式",
+                            subtitle: "随机单词连续出现，想背多久背多久",
+                            icon: "infinity",
+                            tint: Color(red: 0.62, green: 0.36, blue: 0.90)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+
+                    NavigationLink {
+                        ErrorBookView()
+                    } label: {
+                        FeatureCard(
+                            title: "错题本",
+                            subtitle: "答错的词按错误次数自动分级",
+                            icon: "xmark.circle.fill",
+                            tint: Color(red: 0.88, green: 0.22, blue: 0.28)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 28)
+            }
+        }
+        .navigationTitle("学习")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct ProfileView: View {
+    @EnvironmentObject private var vocabularyStore: VocabularyStore
+    @EnvironmentObject private var mistakeStore: MistakeStore
+    @EnvironmentObject private var progressStore: StudyProgressStore
+    @EnvironmentObject private var dailyStudyStore: DailyStudyStore
+
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 22) {
+                    VStack(spacing: 12) {
+                        Text("K")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .frame(width: 84, height: 84)
+                            .background(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 0.16, green: 0.44, blue: 0.96),
+                                        Color(red: 0.56, green: 0.46, blue: 0.95)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+
+                        Text("Kaylee")
+                            .font(.title2.bold())
+
+                        Text("3500 高考核心词汇默写本")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 22)
+
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ],
+                        spacing: 12
+                    ) {
+                        profileStat(
+                            value: "\(dailyStudyStore.currentStreak)",
+                            label: "连续打卡",
+                            color: Color(red: 0.16, green: 0.44, blue: 0.96)
+                        )
+                        profileStat(
+                            value: "\(dailyStudyStore.totalCheckIns)",
+                            label: "累计打卡",
+                            color: Color(red: 0.28, green: 0.68, blue: 0.42)
+                        )
+                        profileStat(
+                            value: "\(mistakeStore.entries.count)",
+                            label: "错题总数",
+                            color: Color(red: 0.88, green: 0.22, blue: 0.28)
+                        )
+                        profileStat(
+                            value: "\(vocabularyStore.entries.count)",
+                            label: "词条总数",
+                            color: Color(red: 0.95, green: 0.48, blue: 0.22)
+                        )
+                    }
+                    .padding(.horizontal, 20)
+
+                    NavigationLink {
+                        CheckInCalendarView()
+                    } label: {
+                        Label("查看打卡日历", systemImage: "calendar")
+                            .font(.headline)
+                            .foregroundStyle(Color(red: 0.16, green: 0.44, blue: 0.96))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(Color(red: 0.16, green: 0.44, blue: 0.96).opacity(0.10))
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                    .padding(.horizontal, 20)
+
+                    Spacer(minLength: 20)
+                }
+            }
+        }
+        .navigationTitle("我的")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func profileStat(value: String, label: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(value)
+                .font(.system(size: 25, weight: .bold, design: .rounded))
+                .foregroundStyle(color)
+
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.black.opacity(0.05), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.035), radius: 12, x: 0, y: 8)
     }
 }

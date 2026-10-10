@@ -84,7 +84,7 @@ struct ErrorBookView: View {
         HStack(spacing: 12) {
             statPill(
                 value: "\(totalMistakeCount)",
-                label: "总体错词",
+                label: "总错词",
                 color: Color(red: 0.88, green: 0.22, blue: 0.28)
             )
 
@@ -98,24 +98,21 @@ struct ErrorBookView: View {
     }
 
     private func statPill(value: String, label: String, color: Color) -> some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(value)
-                .font(.title3.bold())
+                .font(.system(size: 26, weight: .bold, design: .rounded))
                 .foregroundStyle(color)
 
             Text(label)
-                .font(.footnote)
+                .font(.caption)
                 .foregroundStyle(.secondary)
-
-            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(Color.black.opacity(0.05), lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(0.035), radius: 12, x: 0, y: 8)
