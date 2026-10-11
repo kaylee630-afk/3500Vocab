@@ -34,8 +34,10 @@ struct ErrorBookView: View {
     }
 
     private var weekMistakes: [MistakeEntry] {
-        mistakeStore.entries.filter {
-            Calendar.current.isDate($0.lastWrongAt, equalTo: Date(), toGranularity: .weekOfYear)
+        var weekCalendar = Calendar.current
+        weekCalendar.firstWeekday = 2
+        return mistakeStore.entries.filter {
+            weekCalendar.isDate($0.lastWrongAt, equalTo: Date(), toGranularity: .weekOfYear)
         }
     }
 
