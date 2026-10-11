@@ -189,21 +189,20 @@ struct ErrorBookView: View {
             }
             .listRowBackground(Color.white)
 
-            if !weekMistakes.isEmpty {
-                NavigationLink {
-                    MistakePDFExportView(
-                        entries: weekMistakes,
-                        rangeTitle: "本周错词"
-                    )
-                } label: {
-                    exportRow(
-                        title: "导出本周错词",
-                        subtitle: "导出本周错误过的词条",
-                        icon: "calendar.badge.clock"
-                    )
-                }
-                .listRowBackground(Color.white)
+            NavigationLink {
+                MistakePDFExportView(
+                    entries: weekMistakes,
+                    rangeTitle: "本周错词"
+                )
+            } label: {
+                exportRow(
+                    title: "导出本周错词",
+                    subtitle: weekMistakes.isEmpty ? "本周暂无错词" : "导出本周错误过的词条",
+                    icon: weekMistakes.isEmpty ? "calendar" : "calendar.badge.clock"
+                )
             }
+            .disabled(weekMistakes.isEmpty)
+            .listRowBackground(Color.white)
         } header: {
             Text("导出 PDF")
                 .font(.headline)
