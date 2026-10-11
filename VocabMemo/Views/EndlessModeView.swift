@@ -51,6 +51,7 @@ struct EndlessModeView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("无尽模式")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             if current == nil {
                 nextWord(countAsStudied: false)

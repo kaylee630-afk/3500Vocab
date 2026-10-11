@@ -56,6 +56,7 @@ struct AlphabeticalView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("按字母背单词")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private func wordRow(_ entry: VocabularyEntry) -> some View {
@@ -97,6 +98,7 @@ struct WordDetailView: View {
         }
         .navigationTitle("单词详情")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private var termCard: some View {

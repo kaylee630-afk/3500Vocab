@@ -235,7 +235,7 @@ struct HomeView: View {
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView(initialCategory: .word)
+                ErrorBookView(initialCategory: .word, hidesTabBar: true)
             } label: {
                 statTile(
                     value: "\(wordMistakeCount)",
@@ -246,7 +246,7 @@ struct HomeView: View {
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView(initialCategory: .phrase)
+                ErrorBookView(initialCategory: .phrase, hidesTabBar: true)
             } label: {
                 statTile(
                     value: "\(phraseMistakeCount)",
@@ -328,7 +328,7 @@ struct HomeView: View {
                 .buttonStyle(ScaleButtonStyle())
 
                 NavigationLink {
-                    ErrorBookView()
+                    ErrorBookView(hidesTabBar: true)
                 } label: {
                     featureTile(
                         title: "错题本",
@@ -573,7 +573,7 @@ struct HomeView: View {
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView(initialCategory: .word)
+                ErrorBookView(initialCategory: .word, hidesTabBar: true)
             } label: {
                 statPill(
                     value: "\(wordMistakeCount)",
@@ -584,7 +584,7 @@ struct HomeView: View {
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView(initialCategory: .phrase)
+                ErrorBookView(initialCategory: .phrase, hidesTabBar: true)
             } label: {
                 statPill(
                     value: "\(phraseMistakeCount)",
@@ -687,7 +687,7 @@ struct HomeView: View {
             .buttonStyle(ScaleButtonStyle())
 
             NavigationLink {
-                ErrorBookView()
+                ErrorBookView(hidesTabBar: true)
             } label: {
                 FeatureCard(
                     title: "错题本",
@@ -728,6 +728,7 @@ struct CheckInCalendarView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("打卡日历")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private var stats: some View {
@@ -1006,6 +1007,7 @@ struct ProgressDetailView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("学习进度")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
     }
 
     private var summaryCard: some View {
@@ -1165,7 +1167,7 @@ struct LearningHubView: View {
                     .buttonStyle(ScaleButtonStyle())
 
                     NavigationLink {
-                        ErrorBookView()
+                        ErrorBookView(hidesTabBar: true)
                     } label: {
                         FeatureCard(
                             title: "错题本",

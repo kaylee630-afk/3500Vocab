@@ -8,9 +8,11 @@ struct ErrorBookView: View {
 
     @State private var category: VocabularyCategory
     @State private var expandedLevels = Set(MistakeLevel.allCases)
+    private let hidesTabBar: Bool
 
-    init(initialCategory: VocabularyCategory = .all) {
+    init(initialCategory: VocabularyCategory = .all, hidesTabBar: Bool = false) {
         _category = State(initialValue: initialCategory)
+        self.hidesTabBar = hidesTabBar
     }
 
     private var filteredMistakes: [MistakeEntry] {
@@ -69,6 +71,7 @@ struct ErrorBookView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("错题本")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(hidesTabBar ? .hidden : .automatic, for: .tabBar)
         .toolbar {
             if !mistakeStore.entries.isEmpty {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -375,6 +378,7 @@ struct MistakeReviewView: View {
         }
         .navigationTitle("错题随机复习")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             if queue.isEmpty, !mistakeStore.entries.isEmpty {
                 startReview()
@@ -594,6 +598,7 @@ struct MistakePDFExportView: View {
         }
         .navigationTitle("导出\(rangeTitle)")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .translationTask(
             source: Locale.Language(identifier: "en"),
             target: Locale.Language(identifier: "zh-Hans")

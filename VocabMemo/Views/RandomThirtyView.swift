@@ -28,6 +28,7 @@ struct RandomThirtyView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("随机 50 词")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             if hasStarted && entries.isEmpty {
                 startNewRound()
@@ -335,6 +336,7 @@ struct DailyStudyView: View {
         .background(Color.white.ignoresSafeArea())
         .navigationTitle("今日 50 词")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             if entries.isEmpty {
                 startNewRound()
